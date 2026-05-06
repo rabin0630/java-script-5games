@@ -7,6 +7,7 @@ const summaryEl = document.querySelector("#ty-result-container");
 const selectTimeEl = document.querySelector(
   ".ty-time-select",
 ) as HTMLSelectElement;
+const textarea = document.getElementById("ty-textarea");
 const backToStart = document.getElementById("back-to-start");
 const resultPageEl = document.getElementById("ty-result-container");
 const timesGroupEl = document.querySelector("#times") as HTMLOptGroupElement;
@@ -38,40 +39,37 @@ const renderTimeSelectOptions = (times: number[]): void => {
   // 時間選択技
   times.forEach((time) => {
     const optionElements = document.createElement("option");
-    
+
     optionElements.value = String(time);
     optionElements.className = "select-times";
     optionElements.textContent = `${String(time)}second`;
-    
+
     timesGroupEl.appendChild(optionElements);
   });
 };
 
-
 //** 選択した時間を取得する */
 selectTimeEl?.addEventListener("change", () => {
   timeLimit = selectTimeEl.value;
-
 });
-
 
 /** --エラーメッセージを表示する関数である--
  * 第一引数はテキストの挿入
  */
 const showStatus = (text: string, isError = true) => {
-
   // 画面中央のトーストにも表示して5秒で消す（3秒後から2秒かけてフェードアウト）
   toastMessage.textContent = text;
-  toastMessage.style.display = 'block';
-  toastMessage.style.transition = 'none'; // パッと表示させる
-  toastMessage.style.opacity = '1';
+  toastMessage.style.display = "block";
+  toastMessage.style.transition = "none"; // パッと表示させる
+  toastMessage.style.opacity = "1";
 
   if (toastTimeout) clearTimeout(toastTimeout); // エラーが連続して起きた場合のバグ処理
   toastTimeout = setTimeout(() => {
-    toastMessage.style.transition = 'opacity 2s ease-out'; // 2秒かけて透明にする
-    toastMessage.style.opacity = '0';
+    toastMessage.style.transition = "opacity 2s ease-out"; // 2秒かけて透明にする
+    toastMessage.style.opacity = "0";
     setTimeout(() => {
-      if (toastMessage.style.opacity === '0') toastMessage.style.display = 'none';
+      if (toastMessage.style.opacity === "0")
+        toastMessage.style.display = "none";
     }, 2000);
   }, 3000);
 };
@@ -82,7 +80,7 @@ const showStatus = (text: string, isError = true) => {
 const start = (): void => {
   const currentTimeLimit = selectTimeEl.value;
 
-  if(!currentTimeLimit){
+  if (!currentTimeLimit) {
     showStatus("Select time limit!!");
     isPlaying = false;
     return;
@@ -95,18 +93,19 @@ const start = (): void => {
   tittleTimeEl.textContent = timeLimit;
   remainingTime = timeLimit;
   remainingTimeEl.textContent = remainingTime;
+  textarea?.focus();
 };
 
-backToStart?.addEventListener("click",()=>{
+backToStart?.addEventListener("click", () => {
   startPageEl.classList.add("show");
   typingGameEl.classList.remove("show");
   resultPageEl?.classList.remove("show");
   isPlaying = false;
-})
+});
 /** Enterキーを押したときのイベントリスナー */
 window.addEventListener("keypress", (event) => {
   isActive = typingGameParent.classList.contains("active");
-  if (event.key === "Enter" &&isActive && !isPlaying) {
+  if (event.key === "Enter" && isActive && !isPlaying) {
     isActive = false;
     isPlaying = true;
     start(); // タイトル画面からゲーム画面に遷移
@@ -116,3 +115,8 @@ window.addEventListener("keypress", (event) => {
 
 //-------//
 renderTimeSelectOptions(times);
+
+export const resetState = (): void => {
+  isActive = false;
+  isPlaying = false;
+};
