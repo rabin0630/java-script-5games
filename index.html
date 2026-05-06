@@ -60,6 +60,7 @@
       <section id="typing" class="app">
         <div id="ty-start-page" class="show">
           <h1>Typing Challenge</h1>
+          <div id="toast-message" class="toast-message" style="display: none;"></div>
           <div>
             TimeLimit:
             <select class="ty-time-select" list="time-list">
@@ -77,10 +78,11 @@
             <span id="ty-timer"></span>
             <span>s</span>
           </div>
-          <div id="ty-qoute-container">
-            <div id="ty-qoute"></div>
+          <div id="ty-quote-container">
+            <div id="ty-quote"></div>
             <div id="ty-author">
               Author:
+            <span id="ty-author-name"></span>
             </div>
           </div>
           <textarea name="" id="ty-textarea" autofocus></textarea>

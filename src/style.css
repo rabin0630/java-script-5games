@@ -74,6 +74,22 @@ section.active{
   background-color: #fff;
 }
 
+.toast-message {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background-color: rgba(254, 226, 226, 0.95); /* エラー文と同じ赤い背景色（少し透け） */
+  color: #991b1b;
+  padding: 1rem 1.5rem;
+  border-radius: 8px;
+  font-weight: bold;
+  z-index: 1000;
+  text-align: center;
+  pointer-events: none; /* メッセージ越しに裏のボタンを押せるようにする */
+  width: max-content;
+  max-width: 80vw;
+}
 /* to_do => */
 #todo > h1{
     margin-bottom:1.5rem;
@@ -156,10 +172,10 @@ section.active{
 /* typing => */
 
 #ty-start-page{
-    /* position:fixed;
+    position:fixed;
     top:50%;
     left: 50%;
-    transform: translate(-50%, -50%); */
+    transform: translate(-50%, -50%);
     min-height: auto;
     display: flex;
     align-items: center;
