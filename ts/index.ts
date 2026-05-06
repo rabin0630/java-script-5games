@@ -17,12 +17,11 @@ const navmenu = document.createElement("p");
 navmenu.classList.add("nav-menu");
 navmenu.textContent = appName.toUpperCase();
 
+
 // ---選択したメニューを表示する---
 navmenu.addEventListener("click",()=>{
-  /// ----- 選択したアプリを表示する ----- ///
-  // --- 1.全て非表示にする --- //
-  cover.classList.remove("active"); // カバーを非表示にする
-  appElements.forEach((app)=>{app.classList.remove("active");}) // class="app"をすべて非表示
+  cover.classList.remove("active");
+  appElements.forEach((app)=>{app.classList.remove("active");})
   // --- 2.選択したアプリを表示する --- //
   const appElement = document.getElementById(appName); // 選択したアプリをを変数に代入
   appElement.classList.add("active"); // 選択したアプリを表示

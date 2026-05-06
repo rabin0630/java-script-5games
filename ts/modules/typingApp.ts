@@ -1,4 +1,5 @@
 // 型を適切に指定（select要素を想定）
+const typingGameParent = document.getElementById("typing") as HTMLElement;
 const timesElement = document.querySelector("#times") as HTMLSelectElement;
 const startPageEl = document.querySelector("#ty-start-page") as HTMLElement;
 const typingGameEl = document.querySelector("#ty-game") as HTMLElement;
@@ -6,10 +7,18 @@ const summaryEl = document.querySelector("#ty-result-container");
 const selectTimeEl = document.querySelector(
   ".ty-time-select",
 ) as HTMLSelectElement;
+const backToStart = document.getElementById("back-to-start");
+const resultPageEl = document.getElementById("ty-result-container");
 const timesGroupEl = document.querySelector("#times") as HTMLOptGroupElement;
 const tittleTimeEl = document.querySelector("#ty-title-time") as HTMLElement;
 const remainingTimeEl = document.querySelector("#ty-timer") as HTMLElement;
 const toastMessage = document.querySelector(".toast-message") as HTMLElement;
+
+let timeLimit: string = "";
+let remainingTime;
+let isActive = false;
+let isPlaying = false;
+let toastTimeout: ReturnType<typeof setTimeout>;
 
 const times: number[] = [10, 20, 30, 45, 60];
 /**制限時間選択用のselect要素内にoption要素を生成して挿入する
@@ -29,24 +38,22 @@ const renderTimeSelectOptions = (times: number[]): void => {
   // 時間選択技
   times.forEach((time) => {
     const optionElements = document.createElement("option");
-
+    
     optionElements.value = String(time);
-    optionElements.className = "selecttimes";
+    optionElements.className = "select-times";
     optionElements.textContent = `${String(time)}second`;
-
+    
     timesGroupEl.appendChild(optionElements);
   });
 };
 
+
 //** 選択した時間を取得する */
-let timeLimit: string = "";
-let remainingTime;
 selectTimeEl?.addEventListener("change", () => {
   timeLimit = selectTimeEl.value;
 
 });
 
-let toastTimeout: ReturnType<typeof setTimeout>;
 
 /** --エラーメッセージを表示する関数である--
  * 第一引数はテキストの挿入
@@ -68,6 +75,7 @@ const showStatus = (text: string, isError = true) => {
     }, 2000);
   }, 3000);
 };
+
 /** タイトル画面からゲーム画面に遷移する関数である
  * Enterキーを押すときに使用する
  */
@@ -76,6 +84,7 @@ const start = (): void => {
 
   if(!currentTimeLimit){
     showStatus("Select time limit!!");
+    isPlaying = false;
     return;
   }
 
@@ -88,15 +97,21 @@ const start = (): void => {
   remainingTimeEl.textContent = remainingTime;
 };
 
+backToStart?.addEventListener("click",()=>{
+  startPageEl.classList.add("show");
+  typingGameEl.classList.remove("show");
+  resultPageEl?.classList.remove("show");
+  isPlaying = false;
+})
 /** Enterキーを押したときのイベントリスナー */
 window.addEventListener("keypress", (event) => {
-  if (event.key === "Enter") {
+  isActive = typingGameParent.classList.contains("active");
+  if (event.key === "Enter" &&isActive && !isPlaying) {
+    isActive = false;
+    isPlaying = true;
     start(); // タイトル画面からゲーム画面に遷移
-    console.log(selectTimeEl);
-    if (!selectTimeEl.value) {
-      console.log("shit");
-    }
   }
+  return;
 });
 
 //-------//
