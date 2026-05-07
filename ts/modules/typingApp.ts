@@ -27,6 +27,7 @@ const times: number[] = [10, 20, 30, 45, 60];
  * @returns {void}
  */
 const renderTimeSelectOptions = (times: number[]): void => {
+  timesGroupEl.innerHTML = "";
   // デフォルト
   const defaultOption = document.createElement("option");
 
@@ -117,6 +118,10 @@ window.addEventListener("keypress", (event) => {
 renderTimeSelectOptions(times);
 
 export const resetState = (): void => {
+  startPageEl.classList.add("show");
+  typingGameEl.classList.remove("show");
+  resultPageEl?.classList.remove("show");
   isActive = false;
   isPlaying = false;
+  renderTimeSelectOptions(times);
 };

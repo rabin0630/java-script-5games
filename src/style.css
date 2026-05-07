@@ -172,10 +172,10 @@ section.active{
 /* typing => */
 
 #ty-start-page{
-    position:fixed;
+    /* position:fixed;
     top:50%;
     left: 50%;
-    transform: translate(-50%, -50%);
+    transform: translate(-50%, -50%); */
     min-height: auto;
     display: flex;
     align-items: center;
