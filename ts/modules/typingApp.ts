@@ -30,7 +30,7 @@ let quotes: {
   author: string;
 };
 let typedCount: number;
-let LPMCount;
+let LPMCount: number;
 
 const times: number[] = [3, 20, 30, 45, 60];
 /**制限時間選択用のselect要素内にoption要素を生成して挿入する

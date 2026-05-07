@@ -316,3 +316,177 @@ section.active{
     border-bottom: 3px solid red;
 }
 /* <= typing */
+
+/* slide-puzzle => */
+.sp-cover{
+    /* width:100vw;
+    height: 100vh;
+    position:fixed;
+    top:50%;
+    left: 50%;
+    transform: translate(-50%, -50%); */
+    background-color:#444;
+    display:flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    padding:2rem;
+    /* z-index:10; */
+}
+
+.sp-cover > h1{
+    color:hotpink;
+    margin-bottom: 2rem;
+}
+
+.sp-menu{
+    width:80vw;
+    max-width:500px;
+    background-color: #222;
+    display: flex;
+    justify-content:center;
+    align-items:center;
+    flex-direction: column;
+    padding:1rem;
+}
+
+.sp-cover.hide{
+    display:none;
+}
+
+.sp-menu > p{
+    font-size:1.5rem;
+    padding:0 1rem;
+    margin-bottom: 1rem;
+}
+
+.sp-menu > li{
+    width:80%;
+    font-size:2rem;
+    background-color:hotpink;
+    margin:0.5rem;
+    text-align: center;
+    border: 3px solid hotpink;
+    cursor: pointer;
+}
+
+.sp-menu > li:hover{
+    background-color: #fff;
+    color:hotpink;
+}
+
+#sp-original-image{
+    position: absolute;
+    width:480px;
+    top:50%;
+    left: 50%;
+    transform: translate(-50%, -200%);
+    opacity:0;
+    border: 10px solid #222;
+    box-shadow: 0 0 10px 2px #ccc;
+    transition: all 1s;
+}
+
+#sp-original-image.show{
+    transform: translate(-50%, -40%);
+    opacity: 1;
+}
+
+#sp-show-original-btn{
+    width:30px;
+    display:block;
+    cursor:pointer;
+}
+
+#sp-show-original-btn:hover{
+    box-shadow: 0 0 10px 10px lightgreen;
+    transform: scale(0.98);
+}
+
+.sp-info-panel{
+    width:480px;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    margin-bottom:2rem;
+}
+
+.sp-container{
+    display: none;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+}
+.sp-container.show{
+    display: flex;
+}
+.sp-screen{
+    border: 2px solid #fff;
+    display: grid;
+    box-shadow: 0 0 15px 5px rgba(0,0,0,0.5);
+    margin:20px 0;
+}
+
+.sp-screen.zoom{
+    animation: zoom 2s linear forwards, hue-rotation 5s linear infinite;
+}
+
+@keyframes zoom{
+    0%{transform: scale(0.8);}
+    100%{transform:scale(1.2);}
+}
+
+@keyframes hue-rotation{
+    0% {filter:hue-rotate(0deg);}
+    16%{filter:hue-rotate(50deg);}
+    32%{filter:hue-rotate(100deg);}
+    48%{filter:hue-rotate(150deg);}
+    64%{filter:hue-rotate(200deg);}
+    80%{filter:hue-rotate(250deg);}
+    96%{filter:hue-rotate(300deg);}
+    100%{filter:hue-rotate(350deg);}
+}
+
+.sp-tile{
+    height:100%;
+    width:100%;
+    border:1px solid #eee;
+    background-repeat: no-repeat;
+    background-size: cover;
+    border-radius:0;
+    transition:0.8s;
+}
+
+.sp-moves{
+    width:10rem;
+    font-size: 1.2rem;
+    text-align: center;
+    background-color:hotpink;
+}
+
+.sp-back-to-menu{
+    width: 10rem;
+    color:hotpink;
+    font-weight: bold;
+    text-align: center;
+    border:2px solid hotpink;
+    cursor: pointer;
+    transition:0.5s;
+}
+
+.sp-back-to-menu:hover{
+    background-color:hotpink;
+    color:#fff;
+}
+
+.sp-tile.hidden{
+    transform: rotateY(900deg);
+    backface-visibility: hidden;
+}
+
+.sp-tile.complete{
+    border:none;
+    pointer-events:none;
+}
+
+/* <= slide-puzzle */
