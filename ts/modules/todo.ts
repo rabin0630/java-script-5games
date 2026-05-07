@@ -1,9 +1,13 @@
-export const addForm = document.querySelector(".td-add-form") as HTMLFormElement;
+export const addForm = document.querySelector(
+  ".td-add-form",
+) as HTMLFormElement;
 const addInput = document.querySelector(".td-add-input") as HTMLInputElement;
 const todoUI = document.querySelector(".todos") as HTMLBodyElement;
 const DoneUI = document.querySelector(".dones") as HTMLBodyElement;
 const searchForm = document.querySelector(".td-search-form") as HTMLElement;
-const searchInput = document.querySelector(".td-search-input") as HTMLFormElement;
+const searchInput = document.querySelector(
+  ".td-search-input",
+) as HTMLFormElement;
 // 型の定義
 interface Todo {
   content: string;
@@ -38,54 +42,39 @@ function updateLS(data: Todo[]) {
 
 /** ローカルストレージからTodoDataを取得する*/
 function getTodoDataFromLS() {
-  return JSON.parse(localStorage.getItem("myTodo")!)||[];
+  return JSON.parse(localStorage.getItem("myTodo")!) || [];
 }
 
 /** 画像を使用したボタンの生成 */
-function makeBtnImg(className:string,imagePath:string){
-  const btn = document.createElement("img") ;
+function makeBtnImg(className: string, imagePath: string) {
+  const btn = document.createElement("img");
   btn.classList.add("td-btn");
   btn.classList.add(className);
-  btn.setAttribute("src",imagePath)
-  return btn
-  }
-
+  btn.setAttribute("src", imagePath);
+  return btn;
+}
 
 /** 要素を生成する関数 */
 function createTodoElement(todo: Todo) {
   // --- 1.要素の生成 ---
   const todoList = document.createElement("li");
   todoList.classList.add("td-item");
-  
+
   const todoListP = document.createElement("p");
   todoListP.classList.add("td-content");
   todoListP.textContent = todo.content;
-  
+
   todoList.appendChild(todoListP);
-
-  // --- ボタンの生成 ---
-  // const btn = document.createElement("img") as HTMLImageElement;
-  // btn.classList.add("td-btn");
-
-  // const upBtn = btn.cloneNode(false) as HTMLImageElement;
-  // upBtn.setAttribute("src", "/src/images/todo_button/up.png");
 
   let upBtn;
   let btn;
   // --- 2.状態による使用画像の選択
   if (!todo.isDone) {
-    btn = makeBtnImg("isDone-btn","/src/images/todo_button/ok.png")
-    upBtn = makeBtnImg("edit-btn","/src/images/todo_button/up.png");
-    // upBtn.classList.add("edit-btn");
-    // const isDoneBtn = makeBtnImg("isDone-btn");
-    // btn.classList.add("isDone-btn");
-    // btn.setAttribute("src", );
+    btn = makeBtnImg("isDone-btn", "/src/images/todo_button/ok.png");
+    upBtn = makeBtnImg("edit-btn", "/src/images/todo_button/up.png");
   } else {
-    upBtn = makeBtnImg("undo-btn","/src/images/todo_button/up.png")
-    btn = makeBtnImg("delete-btn","/src/images/todo_button/cancel.png")
-    // upBtn.classList.add("undo-btn");
-    // btn.classList.add("delete-btn");
-    // btn.setAttribute("src", "/src/images/todo_button/cancel.png");
+    upBtn = makeBtnImg("undo-btn", "/src/images/todo_button/up.png");
+    btn = makeBtnImg("delete-btn", "/src/images/todo_button/cancel.png");
   }
   // 共通の組み立て処理
   const btnContainer = document.createElement("div");
@@ -97,6 +86,7 @@ function createTodoElement(todo: Todo) {
 
   todoList.addEventListener("click", (event: Event) => {
     const target = event.target as HTMLElement;
+    const previousContent = target.parentElement?.previousElementSibling?.textContent as string;
     if (!target || !target.classList) return;
 
     if (target.classList.contains("isDone-btn")) {
@@ -106,7 +96,7 @@ function createTodoElement(todo: Todo) {
       todo.isDone = false;
     }
     if (target.classList.contains("edit-btn")) {
-      addInput.value = target.parentElement.previousElementSibling.textContent;
+      addInput.value = previousContent      
       todoDatas = todoDatas.filter((data) => data !== todo);
       addInput.focus();
     }
@@ -138,22 +128,22 @@ function updateTodo() {
   todoDatas = getTodoDataFromLS();
   todoDatas.forEach((todo) => {
     renderTodo(todo);
-  });}
-
+  });
+}
 
 updateTodo();
 
-searchForm.addEventListener("submit",(event)=>{
+searchForm.addEventListener("submit", (event) => {
   event.preventDefault();
-})
+});
 
-searchInput.addEventListener("keyup",()=>{
+searchInput.addEventListener("keyup", () => {
   const searchWord = searchInput.value.trim().toLowerCase();
   const todoItems = document.querySelectorAll(".td-item");
-  todoItems.forEach(todoItem => {
+  todoItems.forEach((todoItem) => {
     todoItem.classList.remove("hide");
-    if(!todoItem.textContent.toLowerCase().includes(searchWord)){
+    if (!todoItem.textContent.toLowerCase().includes(searchWord)) {
       todoItem.classList.add("hide");
     }
-  })
-})
+  });
+});
