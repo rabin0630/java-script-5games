@@ -17,8 +17,6 @@ const toastMessage = document.querySelector(".toast-message") as HTMLElement;
 const quote = document.querySelector("#ty-quote") as HTMLElement;
 const author = document.querySelector("#ty-author-name") as HTMLElement;
 
-
-
 let remainingTimeStr: string = "";
 let remainingTimeNumber: number;
 let isActive: boolean = false;
@@ -26,9 +24,9 @@ let isPlaying: boolean = false;
 let toastTimeout: ReturnType<typeof setTimeout>;
 let intervalId: ReturnType<typeof setInterval>;
 
-let quotes:{
-  quote:string,
-  author:string
+let quotes: {
+  quote: string;
+  author: string;
 };
 
 const times: number[] = [3, 20, 30, 45, 60];
@@ -88,7 +86,7 @@ const showStatus = (text: string, isError = true) => {
 /** タイトル画面からゲーム画面に遷移する関数である
  * Enterキーを押すときに使用する
  */
-const start = (): void => {
+const start = async (): Promise<void> => {
   const currentTimeLimit = selectTimeEl.value;
 
   if (!currentTimeLimit) {
@@ -104,6 +102,7 @@ const start = (): void => {
   typingGameEl.classList.add("show");
   tittleTimeEl.textContent = remainingTimeStr;
   remainingTimeEl.textContent = remainingTimeStr;
+  await fetchAndRenderQuotes();
   textarea?.focus();
   textarea.disabled = false;
 
@@ -122,9 +121,9 @@ function showResult() {
   textarea.disabled = true;
 
   clearInterval(intervalId);
-  setTimeout(()=>{
+  setTimeout(() => {
     resultPageEl?.classList.add("show");
-  },1000)
+  }, 1000);
 }
 
 backToStart?.addEventListener("click", () => {
@@ -132,6 +131,9 @@ backToStart?.addEventListener("click", () => {
   typingGameEl.classList.remove("show");
   resultPageEl?.classList.remove("show");
   isPlaying = false;
+
+  quote.innerHTML="";
+  author.innerHTML="";
 });
 /** Enterキーを押したときのイベントリスナー */
 window.addEventListener("keypress", (event) => {
@@ -144,28 +146,40 @@ window.addEventListener("keypress", (event) => {
   return;
 });
 
-async function fetchAndRenderQuotes(){
+async function fetchAndRenderQuotes() {
   const RANDOM_QUOTE_API_URL = "http://api.quotable.io/random";
   const response = await fetch(RANDOM_QUOTE_API_URL);
-  const data = await response.json()
+  const data = await response.json();
 
   quotes = {
-    quote :data.content,
-    author: data.author
-  }
-  console.log(quotes);
+    quote: data.content,
+    author: data.author,
+  };
 
-  quotes.quote.split("").forEach((letter) =>{
+  quotes.quote.split("").forEach((letter) => {
     const span = document.createElement("span");
     span.textContent = letter;
-    quote.appendChild(span)
-  })
+    quote.appendChild(span);
+  });
   author.textContent = quotes.author;
-  console.log(quote);
-  console.log(author);
 }
 
-fetchAndRenderQuotes();
+textarea.addEventListener("input", () => {
+  let inputArray = textarea.value.split("");
+  let spans = quote.querySelectorAll("span");
+
+  inputArray.forEach((letter, index) => {
+    if (letter === spans[index].textContent) {
+      spans[index].classList.add("correct");
+    } else {
+      spans[index].classList.add("wrong");
+      if (spans[index].textContent === "") {
+        spans[index].classList.add("bar");
+      }
+    }
+  });
+});
+
 //-------//
 renderTimeSelectOptions(times);
 
