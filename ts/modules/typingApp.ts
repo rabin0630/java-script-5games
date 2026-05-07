@@ -16,18 +16,21 @@ const remainingTimeEl = document.querySelector("#ty-timer") as HTMLElement;
 const toastMessage = document.querySelector(".toast-message") as HTMLElement;
 const quote = document.querySelector("#ty-quote") as HTMLElement;
 const author = document.querySelector("#ty-author-name") as HTMLElement;
+const LPMEl = document.querySelector("#ty-LPM") as HTMLElement;
+const quoteReviewEl = document.querySelector("#ty-qoute-review") as HTMLElement;
 
-let remainingTimeStr: string = "";
+let TimeLimit: string = "";
 let remainingTimeNumber: number;
 let isActive: boolean = false;
 let isPlaying: boolean = false;
 let toastTimeout: ReturnType<typeof setTimeout>;
 let intervalId: ReturnType<typeof setInterval>;
-
 let quotes: {
   quote: string;
   author: string;
 };
+let typedCount: number;
+let LPMCount;
 
 const times: number[] = [3, 20, 30, 45, 60];
 /**制限時間選択用のselect要素内にoption要素を生成して挿入する
@@ -59,7 +62,7 @@ const renderTimeSelectOptions = (times: number[]): void => {
 
 //** 選択した時間を取得する */
 selectTimeEl?.addEventListener("change", () => {
-  remainingTimeStr = selectTimeEl.value;
+  TimeLimit = selectTimeEl.value;
 });
 
 /** --エラーメッセージを表示する関数である--
@@ -87,7 +90,7 @@ const showStatus = (text: string, isError = true) => {
  * Enterキーを押すときに使用する
  */
 const start = async (): Promise<void> => {
-  const currentTimeLimit = selectTimeEl.value;
+  const currentTimeLimit: string = selectTimeEl.value;
 
   if (!currentTimeLimit) {
     showStatus("Select time limit!!");
@@ -95,15 +98,16 @@ const start = async (): Promise<void> => {
     return;
   }
 
-  remainingTimeStr = currentTimeLimit;
+  TimeLimit = currentTimeLimit;
   remainingTimeNumber = Number(currentTimeLimit);
 
   startPageEl.classList.remove("show");
   typingGameEl.classList.add("show");
-  tittleTimeEl.textContent = remainingTimeStr;
-  remainingTimeEl.textContent = remainingTimeStr;
+  tittleTimeEl.textContent = TimeLimit;
+  remainingTimeEl.textContent = String(remainingTimeNumber);
   quote.innerHTML = "";
   author.innerHTML = "";
+  typedCount = 0;
 
   textarea.value = "";
   textarea.disabled = false;
@@ -125,6 +129,14 @@ function showResult() {
   textarea.disabled = true;
 
   clearInterval(intervalId);
+  LPMCount =
+    remainingTimeNumber === 0
+      ? Math.floor((typedCount * 60) / remainingTimeNumber)
+      : Math.floor(
+          (typedCount * 60) / (Number(TimeLimit) - remainingTimeNumber),
+        );
+        LPMEl.textContent = String(LPMCount);
+        quoteReviewEl.innerHTML =`${quotes.quote}<br>---${quotes.author}`
   setTimeout(() => {
     resultPageEl?.classList.add("show");
   }, 1000);
@@ -171,10 +183,13 @@ textarea.addEventListener("input", () => {
   spans.forEach((span) => {
     span.className = "";
   });
-
+  typedCount = 0;
   inputArray.forEach((letter, index) => {
     if (letter === spans[index].textContent) {
       spans[index].classList.add("correct");
+      if (spans[index].textContent !== "") {
+        typedCount += 1;
+      }
     } else {
       spans[index].classList.add("wrong");
       if (spans[index].textContent === "") {
