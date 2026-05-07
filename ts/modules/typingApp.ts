@@ -102,9 +102,13 @@ const start = async (): Promise<void> => {
   typingGameEl.classList.add("show");
   tittleTimeEl.textContent = remainingTimeStr;
   remainingTimeEl.textContent = remainingTimeStr;
-  await fetchAndRenderQuotes();
-  textarea?.focus();
+  quote.innerHTML = "";
+  author.innerHTML = "";
+
+  textarea.value = "";
   textarea.disabled = false;
+  textarea?.focus();
+  await fetchAndRenderQuotes();
 
   intervalId = setInterval(() => {
     remainingTimeNumber -= 1;
@@ -131,9 +135,6 @@ backToStart?.addEventListener("click", () => {
   typingGameEl.classList.remove("show");
   resultPageEl?.classList.remove("show");
   isPlaying = false;
-
-  quote.innerHTML="";
-  author.innerHTML="";
 });
 /** Enterキーを押したときのイベントリスナー */
 window.addEventListener("keypress", (event) => {
@@ -167,6 +168,9 @@ async function fetchAndRenderQuotes() {
 textarea.addEventListener("input", () => {
   let inputArray = textarea.value.split("");
   let spans = quote.querySelectorAll("span");
+  spans.forEach((span) => {
+    span.className = "";
+  });
 
   inputArray.forEach((letter, index) => {
     if (letter === spans[index].textContent) {
@@ -178,6 +182,12 @@ textarea.addEventListener("input", () => {
       }
     }
   });
+  if (
+    spans.length === inputArray.length &&
+    [...spans].every((span) => span.classList.contains("correct"))
+  ) {
+    showResult();
+  }
 });
 
 //-------//
@@ -190,4 +200,5 @@ export const resetState = (): void => {
   isActive = false;
   isPlaying = false;
   renderTimeSelectOptions(times);
+  clearInterval(intervalId);
 };
