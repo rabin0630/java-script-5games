@@ -7,21 +7,22 @@ const summaryEl = document.querySelector("#ty-result-container");
 const selectTimeEl = document.querySelector(
   ".ty-time-select",
 ) as HTMLSelectElement;
-const textarea = document.getElementById("ty-textarea");
-const backToStart = document.getElementById("back-to-start");
+const textarea = document.getElementById("ty-textarea") as HTMLTextAreaElement;
+const backToStart = document.getElementById("ty-back-to-start");
 const resultPageEl = document.getElementById("ty-result-container");
 const timesGroupEl = document.querySelector("#times") as HTMLOptGroupElement;
 const tittleTimeEl = document.querySelector("#ty-title-time") as HTMLElement;
 const remainingTimeEl = document.querySelector("#ty-timer") as HTMLElement;
 const toastMessage = document.querySelector(".toast-message") as HTMLElement;
 
-let timeLimit: string = "";
-let remainingTime;
-let isActive = false;
-let isPlaying = false;
+let remainingTimeStr: string = "";
+let remainingTimeNumber: number;
+let isActive: boolean = false;
+let isPlaying: boolean = false;
 let toastTimeout: ReturnType<typeof setTimeout>;
+let intervalId: ReturnType<typeof setInterval>;
 
-const times: number[] = [10, 20, 30, 45, 60];
+const times: number[] = [3, 20, 30, 45, 60];
 /**制限時間選択用のselect要素内にoption要素を生成して挿入する
  * @param {number[]} times - 選択肢として表示する秒数の配列
  * @returns {void}
@@ -51,7 +52,7 @@ const renderTimeSelectOptions = (times: number[]): void => {
 
 //** 選択した時間を取得する */
 selectTimeEl?.addEventListener("change", () => {
-  timeLimit = selectTimeEl.value;
+  remainingTimeStr = selectTimeEl.value;
 });
 
 /** --エラーメッセージを表示する関数である--
@@ -87,15 +88,35 @@ const start = (): void => {
     return;
   }
 
-  timeLimit = currentTimeLimit;
+  remainingTimeStr = currentTimeLimit;
+  remainingTimeNumber = Number(currentTimeLimit);
 
   startPageEl.classList.remove("show");
   typingGameEl.classList.add("show");
-  tittleTimeEl.textContent = timeLimit;
-  remainingTime = timeLimit;
-  remainingTimeEl.textContent = remainingTime;
+  tittleTimeEl.textContent = remainingTimeStr;
+  remainingTimeEl.textContent = remainingTimeStr;
   textarea?.focus();
+  textarea.disabled = false;
+
+  intervalId = setInterval(() => {
+    remainingTimeNumber -= 1;
+    remainingTimeEl.textContent = String(remainingTimeNumber);
+
+    if (remainingTimeNumber <= 0) {
+      showResult();
+      renderTimeSelectOptions(times);
+    }
+  }, 1000);
 };
+
+function showResult() {
+  textarea.disabled = true;
+
+  clearInterval(intervalId);
+  setTimeout(()=>{
+    resultPageEl?.classList.add("show");
+  },1000)
+}
 
 backToStart?.addEventListener("click", () => {
   startPageEl.classList.add("show");
