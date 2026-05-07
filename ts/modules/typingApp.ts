@@ -131,14 +131,21 @@ function showResult() {
   clearInterval(intervalId);
   LPMCount =
     remainingTimeNumber === 0
-      ? Math.floor((typedCount * 60) / remainingTimeNumber)
+      ? Math.floor((typedCount * 60) / Number(TimeLimit))
       : Math.floor(
           (typedCount * 60) / (Number(TimeLimit) - remainingTimeNumber),
         );
-        LPMEl.textContent = String(LPMCount);
-        quoteReviewEl.innerHTML =`${quotes.quote}<br>---${quotes.author}`
+  quoteReviewEl.innerHTML = `${quotes.quote}<br>---${quotes.author}`;
+  let count: number = 0;
   setTimeout(() => {
     resultPageEl?.classList.add("show");
+    const countup = setInterval(() => {
+      LPMEl.textContent = String(count);
+      count += 1;
+      if (count >= LPMCount) {
+        clearInterval(countup);
+      }
+    }, 20);
   }, 1000);
 }
 
