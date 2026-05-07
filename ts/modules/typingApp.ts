@@ -14,6 +14,10 @@ const timesGroupEl = document.querySelector("#times") as HTMLOptGroupElement;
 const tittleTimeEl = document.querySelector("#ty-title-time") as HTMLElement;
 const remainingTimeEl = document.querySelector("#ty-timer") as HTMLElement;
 const toastMessage = document.querySelector(".toast-message") as HTMLElement;
+const quote = document.querySelector("#ty-quote") as HTMLElement;
+const author = document.querySelector("#ty-author-name") as HTMLElement;
+
+
 
 let remainingTimeStr: string = "";
 let remainingTimeNumber: number;
@@ -21,6 +25,11 @@ let isActive: boolean = false;
 let isPlaying: boolean = false;
 let toastTimeout: ReturnType<typeof setTimeout>;
 let intervalId: ReturnType<typeof setInterval>;
+
+let quotes:{
+  quote:string,
+  author:string
+};
 
 const times: number[] = [3, 20, 30, 45, 60];
 /**制限時間選択用のselect要素内にoption要素を生成して挿入する
@@ -135,6 +144,28 @@ window.addEventListener("keypress", (event) => {
   return;
 });
 
+async function fetchAndRenderQuotes(){
+  const RANDOM_QUOTE_API_URL = "http://api.quotable.io/random";
+  const response = await fetch(RANDOM_QUOTE_API_URL);
+  const data = await response.json()
+
+  quotes = {
+    quote :data.content,
+    author: data.author
+  }
+  console.log(quotes);
+
+  quotes.quote.split("").forEach((letter) =>{
+    const span = document.createElement("span");
+    span.textContent = letter;
+    quote.appendChild(span)
+  })
+  author.textContent = quotes.author;
+  console.log(quote);
+  console.log(author);
+}
+
+fetchAndRenderQuotes();
 //-------//
 renderTimeSelectOptions(times);
 
