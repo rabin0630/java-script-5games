@@ -3,6 +3,7 @@ const backToMenuEl = document.querySelector(".sp-back-to-menu") as HTMLElement;
 const gamePageEl = document.querySelector(".sp-container") as HTMLElement;
 const showOriginalBtnEl = document.querySelector("#sp-show-original-btn");
 const gameScreen = document.querySelector(".sp-screen") as HTMLElement;
+const movesEl = document.querySelector(".sp-counter");
 const originalImageEl = document.querySelector(
   "#sp-original-image",
 ) as HTMLImageElement;
@@ -10,7 +11,8 @@ const levelOptions = document.querySelectorAll(
   ".sp-menu > li",
 ) as NodeListOf<HTMLLIElement>;
 
-// 型定義
+/* 型定義 => */
+
 interface LevelMap {
   [key: string]: {
     grid: string;
@@ -18,13 +20,21 @@ interface LevelMap {
   };
 }
 
-// 定数
+/** <= 型定義 */
+
+/** 変数 => */
+
 let selectedLevel: string;
 let selectedImage: string;
 let size: number;
 let orderedArray: string[] = [];
 let hiddenTileIndex;
 let tilesArray = [];
+let tiles;
+let tileMoveCounter: number = 0;
+/* <= 変数 */
+
+/* 定数 => */
 
 const images = ["space", "veges"];
 const levelMap: LevelMap = {
@@ -33,7 +43,10 @@ const levelMap: LevelMap = {
   difficult: { grid: "auto auto auto auto", size: 4 },
 };
 
-// 関数
+/* <= 定数 */
+
+/* 関数 => */
+
 const showGamePage = (): void => {
   menuPageEl.classList.add("hide");
   gamePageEl.classList.add("show");
@@ -42,6 +55,7 @@ const showGamePage = (): void => {
 const showMenuPage = (): void => {
   menuPageEl.classList.remove("hide");
   gamePageEl.classList.remove("show");
+  gameScreen.classList.remove("zoom");
 };
 
 const setOriginalImage = () => {
@@ -74,9 +88,12 @@ const renderTiles = (arr: string[]): void => {
 };
 
 const start = () => {
+  tileMoveCounter = 0;
+  movesEl.innerHTML = tileMoveCounter;
   setOriginalImage();
   tilesArray = generateShuffledArray(orderedArray);
   renderTiles(tilesArray);
+  updateScreen();
 };
 
 const generateShuffledArray = (arr) => {
@@ -90,7 +107,67 @@ const generateShuffledArray = (arr) => {
   return shuffledArray;
 };
 
-// イベントリスナー
+const updateScreen = () => {
+  tiles = document.querySelectorAll(".sp-tile");
+  const hiddenTileRow = Math.floor(hiddenTileIndex / size);
+  const hiddenTileCol = hiddenTileIndex % size;
+
+  const generateNewArray = (arr, index, hiddenTileIndex) => {
+    const tempArr = arr[index];
+    arr[index] = arr[hiddenTileIndex];
+    arr[hiddenTileIndex] = tempArr;
+    return arr;
+  };
+
+  const updateTiles = (index) => {
+    tilesArray = generateNewArray(tilesArray, index, hiddenTileIndex);
+    hiddenTileIndex = index;
+    renderTiles(tilesArray);
+    updateMoveCount();
+    setTimeout(()=>{
+      if(JSON.stringify(tilesArray) === JSON.stringify(orderedArray)){
+        complete();
+      }
+    },500)
+    updateScreen(); // ここで呼べば増殖しない
+  };
+
+  const updateMoveCount = () => {
+    movesEl.innerHTML = "";
+    tileMoveCounter += 1;
+    movesEl.innerHTML = String(tileMoveCounter);
+  };
+
+  tiles.forEach((tile, index) => {
+    tile.addEventListener("click", () => {
+      const row = Math.floor(index / size);
+      const col = index % size;
+      if (selectedLevel === "easy") {
+        updateTiles(index);
+      } else {
+        if (
+          (row === hiddenTileRow && Math.abs(col - hiddenTileCol) === 1) ||
+          (col === hiddenTileCol && Math.abs(row - hiddenTileRow) === 1)
+        ) {
+          updateTiles(index);
+        }
+      }
+    });
+  });
+};
+
+const complete = () => {
+  tiles[hiddenTileIndex].classList.remove("hidden");
+  gameScreen.classList.add("zoom");
+  tiles.forEach((tile)=>{
+    tile.classList.add("complete");
+
+  })
+}
+/** <= 関数 */
+
+/** イベントリスナー => */
+
 backToMenuEl.addEventListener("click", () => {
   showMenuPage();
   selectedLevel = "";
@@ -122,5 +199,7 @@ showOriginalBtnEl?.addEventListener("mouseover", () => {
 showOriginalBtnEl?.addEventListener("mouseleave", () => {
   originalImageEl.classList.remove("show");
 });
+
+/** <= イベントリスナー */
 
 export {};

@@ -493,4 +493,9 @@ section.active{
     transform: rotateY(900deg);
     backface-visibility: hidden;
 }
+
+.sp-tile.complete{
+    border: none;
+    pointer-events: none;
+}
 /* <= slide-puzzle */
