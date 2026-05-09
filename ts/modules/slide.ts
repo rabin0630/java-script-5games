@@ -24,6 +24,7 @@ let selectedImage: string;
 let size: number;
 let orderedArray: string[] = [];
 let hiddenTileIndex;
+let tilesArray = [];
 
 const images = ["space", "veges"];
 const levelMap: LevelMap = {
@@ -51,19 +52,20 @@ const setOriginalImage = () => {
   );
 };
 
-originalImageEl.onload = () =>{
+originalImageEl.onload = () => {
   const naturalWidth = originalImageEl.naturalWidth;
   const naturalHeight = originalImageEl.naturalHeight;
-  const ratio = Math.floor(naturalHeight/naturalWidth * 1000)/ 1000;
+  const ratio = Math.floor((naturalHeight / naturalWidth) * 1000) / 1000;
   gameScreen.style.width = "480px";
-  gameScreen.style.height = `${Math.floor(480*ratio)}px`
-}
+  gameScreen.style.height = `${Math.floor(480 * ratio)}px`;
+};
+
 const renderTiles = (arr: string[]): void => {
   gameScreen.innerHTML = "";
-  arr.forEach((tile,index) => {
+  arr.forEach((tile, index) => {
     const div = document.createElement("div");
     div.classList.add("sp-tile");
-    if(index ===hiddenTileIndex){
+    if (index === hiddenTileIndex) {
       div.classList.add("hidden");
     }
     div.style.backgroundImage = `url(./src/images/slide_puzzle/${selectedImage}/${selectedLevel}/tile${tile}.png)`;
@@ -73,7 +75,19 @@ const renderTiles = (arr: string[]): void => {
 
 const start = () => {
   setOriginalImage();
-  renderTiles(orderedArray);
+  tilesArray = generateShuffledArray(orderedArray);
+  renderTiles(tilesArray);
+};
+
+const generateShuffledArray = (arr) => {
+  let shuffledArray = arr.slice();
+  for (let i = shuffledArray.length - 1; i > -1; i--) {
+    let randomIndex = Math.floor(Math.random() * shuffledArray.length);
+    let tempValue = shuffledArray[i];
+    shuffledArray[i] = shuffledArray[randomIndex];
+    shuffledArray[randomIndex] = tempValue;
+  }
+  return shuffledArray;
 };
 
 // イベントリスナー
