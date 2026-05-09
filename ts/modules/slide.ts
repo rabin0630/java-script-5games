@@ -3,7 +3,7 @@ const backToMenuEl = document.querySelector(".sp-back-to-menu") as HTMLElement;
 const gamePageEl = document.querySelector(".sp-container") as HTMLElement;
 const showOriginalBtnEl = document.querySelector("#sp-show-original-btn");
 const gameScreen = document.querySelector(".sp-screen") as HTMLElement;
-const movesEl = document.querySelector(".sp-counter");
+const movesEl = document.querySelector(".sp-counter") as HTMLElement;
 const originalImageEl = document.querySelector(
   "#sp-original-image",
 ) as HTMLImageElement;
@@ -28,9 +28,9 @@ let selectedLevel: string;
 let selectedImage: string;
 let size: number;
 let orderedArray: string[] = [];
-let hiddenTileIndex;
-let tilesArray = [];
-let tiles;
+let hiddenTileIndex: number;
+let tilesArray: string[] = [];
+let tiles: NodeListOf<HTMLElement>;
 let tileMoveCounter: number = 0;
 /* <= 変数 */
 
@@ -58,7 +58,7 @@ const showMenuPage = (): void => {
   gameScreen.classList.remove("zoom");
 };
 
-const setOriginalImage = () => {
+const setOriginalImage = (): void => {
   selectedImage = images[Math.floor(Math.random() * images.length)];
   originalImageEl?.setAttribute(
     "src",
@@ -87,16 +87,16 @@ const renderTiles = (arr: string[]): void => {
   });
 };
 
-const start = () => {
+const start = (): void => {
   tileMoveCounter = 0;
-  movesEl.innerHTML = tileMoveCounter;
+  movesEl.innerHTML = String(tileMoveCounter);
   setOriginalImage();
   tilesArray = generateShuffledArray(orderedArray);
   renderTiles(tilesArray);
   updateScreen();
 };
 
-const generateShuffledArray = (arr) => {
+const generateShuffledArray = (arr: string[]): string[] => {
   let shuffledArray = arr.slice();
   for (let i = shuffledArray.length - 1; i > -1; i--) {
     let randomIndex = Math.floor(Math.random() * shuffledArray.length);
@@ -107,19 +107,19 @@ const generateShuffledArray = (arr) => {
   return shuffledArray;
 };
 
-const updateScreen = () => {
-  tiles = document.querySelectorAll(".sp-tile");
+const updateScreen = (): void => {
+  tiles = document.querySelectorAll(".sp-tile") as NodeListOf<HTMLElement>;
   const hiddenTileRow = Math.floor(hiddenTileIndex / size);
   const hiddenTileCol = hiddenTileIndex % size;
 
-  const generateNewArray = (arr, index, hiddenTileIndex) => {
+  const generateNewArray = (arr: string[], index: number, hiddenTileIndex: number): string[] => {
     const tempArr = arr[index];
     arr[index] = arr[hiddenTileIndex];
     arr[hiddenTileIndex] = tempArr;
     return arr;
   };
 
-  const updateTiles = (index) => {
+  const updateTiles = (index: number): void => {
     tilesArray = generateNewArray(tilesArray, index, hiddenTileIndex);
     hiddenTileIndex = index;
     renderTiles(tilesArray);
@@ -132,7 +132,7 @@ const updateScreen = () => {
     updateScreen(); // ここで呼べば増殖しない
   };
 
-  const updateMoveCount = () => {
+  const updateMoveCount = (): void => {
     movesEl.innerHTML = "";
     tileMoveCounter += 1;
     movesEl.innerHTML = String(tileMoveCounter);
@@ -156,7 +156,7 @@ const updateScreen = () => {
   });
 };
 
-const complete = () => {
+const complete = (): void => {
   tiles[hiddenTileIndex].classList.remove("hidden");
   gameScreen.classList.add("zoom");
   tiles.forEach((tile)=>{
