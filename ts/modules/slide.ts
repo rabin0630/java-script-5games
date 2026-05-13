@@ -1,13 +1,16 @@
-const menuPageEl = document.querySelector(".sp-cover") as HTMLElement;
-const backToMenuEl = document.querySelector(".sp-back-to-menu") as HTMLElement;
-const gamePageEl = document.querySelector(".sp-container") as HTMLElement;
-const showOriginalBtnEl = document.querySelector("#sp-show-original-btn");
-const gameScreen = document.querySelector(".sp-screen") as HTMLElement;
 const movesEl = document.querySelector(".sp-counter") as HTMLElement;
+const menuPageEl = document.querySelector(".sp-cover") as HTMLElement;
+const gamePageEl = document.querySelector(".sp-container") as HTMLElement;
+const gameScreenEl = document.querySelector(".sp-screen") as HTMLElement;
+const backToMenuEl = document.querySelector(".sp-back-to-menu") as HTMLElement;
+const showOriginalBtnEl = document.querySelector(
+  "#sp-show-original-btn",
+) as HTMLElement;
+
 const originalImageEl = document.querySelector(
   "#sp-original-image",
 ) as HTMLImageElement;
-const levelOptions = document.querySelectorAll(
+const levelOptionsEl = document.querySelectorAll(
   ".sp-menu > li",
 ) as NodeListOf<HTMLLIElement>;
 
@@ -24,19 +27,21 @@ interface LevelMap {
 
 /** 変数 => */
 
-let selectedLevel: string;
-let selectedImage: string;
 let size: number;
-let orderedArray: string[] = [];
-let hiddenTileIndex: number;
+let tilesEl: NodeListOf<HTMLElement>;
 let tilesArray: string[] = [];
-let tiles: NodeListOf<HTMLElement>;
+let orderedArray: string[] = [];
+let selectedLevel: string;
+let hiddenTileIndex: number;
 let tileMoveCounter: number = 0;
+let randomSelectedImage: string;
+
 /* <= 変数 */
 
 /* 定数 => */
 
-const images = ["space", "veges"];
+const images: string[] = ["space", "veges"];
+
 const levelMap: LevelMap = {
   easy: { grid: "auto auto", size: 2 },
   medium: { grid: "auto auto auto", size: 3 },
@@ -55,35 +60,42 @@ const showGamePage = (): void => {
 const showMenuPage = (): void => {
   menuPageEl.classList.remove("hide");
   gamePageEl.classList.remove("show");
-  gameScreen.classList.remove("zoom");
+  gameScreenEl.classList.remove("zoom");
 };
 
 const setOriginalImage = (): void => {
-  selectedImage = images[Math.floor(Math.random() * images.length)];
+  randomSelectedImage = images[Math.floor(Math.random() * images.length)]; // 写真をランダムで決める
   originalImageEl?.setAttribute(
     "src",
-    `./src/images/slide_puzzle/${selectedImage}/${selectedImage}.png`,
+    `./src/images/slide_puzzle/${randomSelectedImage}/${randomSelectedImage}.png`,
   );
 };
 
+/** ゲーム画面のタイルサイズを指定する
+ * 
+ */
 originalImageEl.onload = () => {
   const naturalWidth = originalImageEl.naturalWidth;
   const naturalHeight = originalImageEl.naturalHeight;
   const ratio = Math.floor((naturalHeight / naturalWidth) * 1000) / 1000;
-  gameScreen.style.width = "480px";
-  gameScreen.style.height = `${Math.floor(480 * ratio)}px`;
+
+  gameScreenEl.style.width = "480px";
+  gameScreenEl.style.height = `${Math.floor(480 * ratio)}px`;
 };
 
-const renderTiles = (arr: string[]): void => {
-  gameScreen.innerHTML = "";
-  arr.forEach((tile, index) => {
-    const div = document.createElement("div");
-    div.classList.add("sp-tile");
+const renderTiles = (tiles: string[]): void => {
+  gameScreenEl.innerHTML = "";
+
+  tiles.forEach((tile, index) => {
+    const tileEl = document.createElement("div") as HTMLDivElement;
+
+    tileEl.classList.add("sp-tile");
+
     if (index === hiddenTileIndex) {
-      div.classList.add("hidden");
+      tileEl.classList.add("hidden");
     }
-    div.style.backgroundImage = `url(./src/images/slide_puzzle/${selectedImage}/${selectedLevel}/tile${tile}.png)`;
-    gameScreen.appendChild(div);
+    tileEl.style.backgroundImage = `url(./src/images/slide_puzzle/${randomSelectedImage}/${selectedLevel}/tile${tile}.png)`;
+    gameScreenEl.appendChild(tileEl);
   });
 };
 
@@ -108,11 +120,15 @@ const generateShuffledArray = (arr: string[]): string[] => {
 };
 
 const updateScreen = (): void => {
-  tiles = document.querySelectorAll(".sp-tile") as NodeListOf<HTMLElement>;
+  tilesEl = document.querySelectorAll(".sp-tile") as NodeListOf<HTMLElement>;
   const hiddenTileRow = Math.floor(hiddenTileIndex / size);
   const hiddenTileCol = hiddenTileIndex % size;
 
-  const generateNewArray = (arr: string[], index: number, hiddenTileIndex: number): string[] => {
+  const generateNewArray = (
+    arr: string[],
+    index: number,
+    hiddenTileIndex: number,
+  ): string[] => {
     const tempArr = arr[index];
     arr[index] = arr[hiddenTileIndex];
     arr[hiddenTileIndex] = tempArr;
@@ -124,11 +140,11 @@ const updateScreen = (): void => {
     hiddenTileIndex = index;
     renderTiles(tilesArray);
     updateMoveCount();
-    setTimeout(()=>{
-      if(JSON.stringify(tilesArray) === JSON.stringify(orderedArray)){
+    setTimeout(() => {
+      if (JSON.stringify(tilesArray) === JSON.stringify(orderedArray)) {
         complete();
       }
-    },500)
+    }, 500);
     updateScreen(); // ここで呼べば増殖しない
   };
 
@@ -138,7 +154,7 @@ const updateScreen = (): void => {
     movesEl.innerHTML = String(tileMoveCounter);
   };
 
-  tiles.forEach((tile, index) => {
+  tilesEl.forEach((tile, index) => {
     tile.addEventListener("click", () => {
       const row = Math.floor(index / size);
       const col = index % size;
@@ -157,13 +173,12 @@ const updateScreen = (): void => {
 };
 
 const complete = (): void => {
-  tiles[hiddenTileIndex].classList.remove("hidden");
-  gameScreen.classList.add("zoom");
-  tiles.forEach((tile)=>{
+  tilesEl[hiddenTileIndex].classList.remove("hidden");
+  gameScreenEl.classList.add("zoom");
+  tilesEl.forEach((tile) => {
     tile.classList.add("complete");
-
-  })
-}
+  });
+};
 /** <= 関数 */
 
 /** イベントリスナー => */
@@ -173,7 +188,7 @@ backToMenuEl.addEventListener("click", () => {
   selectedLevel = "";
 });
 
-levelOptions.forEach((option) => {
+levelOptionsEl.forEach((option) => {
   option.addEventListener("click", () => {
     orderedArray = [];
     selectedLevel = option.dataset.level as string;
@@ -185,7 +200,7 @@ levelOptions.forEach((option) => {
       }
     }
     hiddenTileIndex = Math.floor(Math.random() * size ** 2);
-    gameScreen.style.gridTemplateColumns = levelMap[selectedLevel].grid;
+    gameScreenEl.style.gridTemplateColumns = levelMap[selectedLevel].grid;
 
     showGamePage();
     start();
