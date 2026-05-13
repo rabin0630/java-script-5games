@@ -167,12 +167,15 @@ window.addEventListener("keypress", (event) => {
 });
 
 async function fetchAndRenderQuotes() {
-  const RANDOM_QUOTE_API_URL = "http://api.quotable.io/random";
+  const RANDOM_QUOTE_API_URL = "https://dummyjson.com/quotes/random";
+
+
   const response = await fetch(RANDOM_QUOTE_API_URL);
+  console.log(response);
   const data = await response.json();
 
   quotes = {
-    quote: data.content,
+    quote: data.quote, // dummyjsonAPIは content ではなく quote というプロパティ名で文章が返ってきます
     author: data.author,
   };
 

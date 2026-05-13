@@ -1,6 +1,7 @@
 import * as Todo from "./modules/todo";
 import * as typingApp from "./modules/typingApp";
 import * as slide from "./modules/slide";
+import * as memory from "./modules/memory"
 const nav = document.querySelector("nav") as HTMLElement;
 const cover = document.getElementById("cover") as HTMLElement;
 const appElements = document.querySelectorAll(".app") as NodeListOf<Element>;
