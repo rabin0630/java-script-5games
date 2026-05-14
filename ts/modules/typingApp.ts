@@ -1,23 +1,24 @@
 // 型を適切に指定（select要素を想定）
-const typingGameParent = document.getElementById("typing") as HTMLElement;
-const timesElement = document.querySelector("#times") as HTMLSelectElement;
-const startPageEl = document.querySelector("#ty-start-page") as HTMLElement;
-const typingGameEl = document.querySelector("#ty-game") as HTMLElement;
-const summaryEl = document.querySelector("#ty-result-container");
-const selectTimeEl = document.querySelector(
-  ".ty-time-select",
-) as HTMLSelectElement;
+const LPMEl = document.querySelector("#ty-LPM") as HTMLElement;
+const quote = document.querySelector("#ty-quote") as HTMLElement;
+const author = document.querySelector("#ty-author-name") as HTMLElement;
 const textarea = document.getElementById("ty-textarea") as HTMLTextAreaElement;
+const summaryEl = document.querySelector("#ty-result-container");
+const startPageEl = document.querySelector("#ty-start-page") as HTMLElement;
 const backToStart = document.getElementById("ty-back-to-start");
+const timesElement = document.querySelector("#times") as HTMLSelectElement;
+const typingGameEl = document.querySelector("#ty-game") as HTMLElement;
 const resultPageEl = document.getElementById("ty-result-container");
 const timesGroupEl = document.querySelector("#times") as HTMLOptGroupElement;
 const tittleTimeEl = document.querySelector("#ty-title-time") as HTMLElement;
-const remainingTimeEl = document.querySelector("#ty-timer") as HTMLElement;
 const toastMessage = document.querySelector(".toast-message") as HTMLElement;
-const quote = document.querySelector("#ty-quote") as HTMLElement;
-const author = document.querySelector("#ty-author-name") as HTMLElement;
-const LPMEl = document.querySelector("#ty-LPM") as HTMLElement;
 const quoteReviewEl = document.querySelector("#ty-qoute-review") as HTMLElement;
+const remainingTimeEl = document.querySelector("#ty-timer") as HTMLElement;
+const typingGameParent = document.getElementById("typing") as HTMLElement;
+
+const selectTimeEl = document.querySelector(
+  ".ty-time-select",
+) as HTMLSelectElement;
 
 let TimeLimit: string = "";
 let remainingTimeNumber: number;
